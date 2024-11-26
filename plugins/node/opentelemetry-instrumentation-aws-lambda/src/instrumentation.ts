@@ -40,9 +40,13 @@ import {
 } from '@opentelemetry/api';
 import {
   SEMATTRS_FAAS_EXECUTION,
-  SEMRESATTRS_CLOUD_ACCOUNT_ID,
   SEMRESATTRS_FAAS_ID,
 } from '@opentelemetry/semantic-conventions';
+import {
+  ATTR_FAAS_INVOCATION_ID,
+  ATTR_CLOUD_ACCOUNT_ID,
+  ATTR_CLOUD_RESOURCE_ID,
+} from '@opentelemetry/semantic-conventions/incubating';
 import { ATTR_FAAS_COLDSTART } from '@opentelemetry/semantic-conventions/incubating';
 
 import {
@@ -238,11 +242,12 @@ export class AwsLambdaInstrumentation extends InstrumentationBase<AwsLambdaInstr
           kind: SpanKind.SERVER,
           attributes: {
             [SEMATTRS_FAAS_EXECUTION]: context.awsRequestId,
+            [ATTR_FAAS_INVOCATION_ID]: context.awsRequestId,
             [SEMRESATTRS_FAAS_ID]: context.invokedFunctionArn,
-            [SEMRESATTRS_CLOUD_ACCOUNT_ID]:
-              AwsLambdaInstrumentation._extractAccountId(
-                context.invokedFunctionArn
-              ),
+            [ATTR_CLOUD_RESOURCE_ID]: context.invokedFunctionArn,
+            [ATTR_CLOUD_ACCOUNT_ID]: AwsLambdaInstrumentation._extractAccountId(
+              context.invokedFunctionArn
+            ),
             [ATTR_FAAS_COLDSTART]: requestIsColdStart,
           },
         },
