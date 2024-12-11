@@ -39,6 +39,7 @@ import {
   SEMATTRS_FAAS_EXECUTION,
   SEMRESATTRS_FAAS_NAME,
 } from '@opentelemetry/semantic-conventions';
+import { ATTR_FAAS_INVOCATION_ID } from '@opentelemetry/semantic-conventions/incubating';
 import {
   Context as OtelContext,
   context,
@@ -64,6 +65,10 @@ const assertSpanSuccess = (span: ReadableSpan) => {
     span.attributes[SEMATTRS_FAAS_EXECUTION],
     'aws_request_id'
   );
+  assert.strictEqual(
+    span.attributes[ATTR_FAAS_INVOCATION_ID],
+    'aws_request_id'
+  );
   assert.strictEqual(span.attributes['faas.id'], 'my_arn');
   assert.strictEqual(span.status.code, SpanStatusCode.UNSET);
   assert.strictEqual(span.status.message, undefined);
@@ -74,6 +79,10 @@ const assertSpanFailure = (span: ReadableSpan) => {
   assert.strictEqual(span.name, 'my_function');
   assert.strictEqual(
     span.attributes[SEMATTRS_FAAS_EXECUTION],
+    'aws_request_id'
+  );
+  assert.strictEqual(
+    span.attributes[ATTR_FAAS_INVOCATION_ID],
     'aws_request_id'
   );
   assert.strictEqual(span.attributes['faas.id'], 'my_arn');
